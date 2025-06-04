@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>Emotion-Guided Residual Vector Quantization for Controllable and Expressive Speech Synthesis</title>
+	<meta name="generator" content="Jekyll v3.9.0">
+	<meta property="og:title" content="Emotion-Guided Residual Vector Quantization for Controllable and Expressive Speech Synthesis">
+	<meta property="og.locale" content ="en_US">
+
+	<meta name="twitter:card" content="summary">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#157878">
+	<link rel="stylesheet" href="./style.css">
+  
+</head>
+
+<section class = "page-header">
+</section>
+
+<section class="main-context">
+	<h1 id=""><center>Text-aware Emotional TTS via Emotion-Guided Residual Vector Quantization and Codebook Update Strategy</center></h1>
+
+	<!-- 대체 텍스트 -->
+	<div>
+	  <center><i>Anonymous submission to ASRU 2025</i></center>
+	</div>
+	<br>
+  <br>
+	<center><a name="1"><h2>Demo</h2></a></center>
+	<h3>1. Synthesized with Test Dataset</h3>
+		<ul><p>
+			All the model was trained with batch size 32 and reconstructed to wave form by fine-tuned HiFi-GAN universal model.
+		</p></ul>
+	<div style="overflow-x: auto;">
+    <table style="border-collapse: collapse; width: 100%; font-size: 16px; text-align: center;">
+      <tr>
+        <th colspan="9" style="font-size: 20px; padding: 15px; border-bottom: 2px solid black;">Synthesized with Test Datset</th>
+      </tr>
+      <tr>
+        <th style="border-top: 1px solid black; border-bottom: 1px solid black; width: 500px; text-align: center;">Text</th>
+        <th style="border-top: 1px solid black; border-bottom: 1px solid black;">GT</th>
+        <th style="border-top: 1px solid black; border-bottom: 1px solid black;">TSP-TTS</th>
+        <th style="border-top: 1px solid black; border-bottom: 1px solid black;">TSP-TTS (w/ dead code update)</th>
+        <th style="border-top: 1px solid black; border-bottom: 1px solid black;">Proposed</th>
+        <th style="border-top: 1px solid black; border-bottom: 1px solid black;">Proposed (w/o fine-tuning)</th>
+
+        <th style="border-top: 1px solid black; border-bottom: 1px solid black;"> ▷ Proposed (w/o style guided initialization)</th>
+        <th style="border-top: 1px solid black; border-bottom: 1px solid black;"> ▷ Proposed (w/o cluster loss)</th>
+        <th style="border-top: 1px solid black; border-bottom: 1px solid black;"> ▷ Proposed (w/o dead code update)</th>
+      </tr>
+    
+      <!-- Angry -->
+      <tr>
+        <td style="
+          border-top: 1px solid black; 
+          border-bottom: 1px solid black; 
+          padding: 10px; 
+          word-wrap: break-word; 
+          white-space: normal; 
+          line-height: 1.5; 
+          text-align: left; 
+          min-width: 300px; 
+          max-width: 500px; 
+          overflow: auto;">
+          <strong>Emotion:</strong> Angry<br>
+          <strong>Korean:</strong> 고모는 조카딸의 품행 나쁜 것을 밉게 보았던 모양이지.<br>
+          <strong>English translation:</strong> It seems the aunt disapproved of her niece's bad behavior.
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/GT/OES_ang_000594.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/TSP-TTS/OES_ang_000594.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/TSP-TTS-upd/OES_ang_000594.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-ft/OES_ang_000594.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed/OES_ang_000594.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-egi/OES_ang_000594.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-clu/OES_ang_000594.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-upd/OES_ang_000594.wav" controls preload></audio>
+        </td>
+      </tr>
+    
+      <!-- Anxiety -->
+      <tr>
+        <td style="
+          border-top: 1px solid black; 
+          border-bottom: 1px solid black; 
+          padding: 10px; 
+          word-wrap: break-word; 
+          white-space: normal; 
+          line-height: 1.5; 
+          text-align: left; 
+          min-width: 300px; 
+          max-width: 500px; 
+          overflow: auto;">
+          <strong>Emotion:</strong> Anxiety<br>
+          <strong>Korean:</strong> 고민을 한 셈이군요<br>
+          <strong>English translation:</strong> So, you’ve given it some thought.
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/GT/OES_anx_001246.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/TSP-TTS/OES_anx_001246.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/TSP-TTS-upd/OES_anx_001246.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-ft/OES_anx_001246.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed/OES_anx_001246.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-egi/OES_anx_001246.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-clu/OES_anx_001246.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-upd/OES_anx_001246.wav" controls preload></audio>
+        </td>
+      </tr>
+    
+      <!-- Embarrassment -->
+      <tr>
+        <td style="
+          border-top: 1px solid black; 
+          border-bottom: 1px solid black; 
+          padding: 10px; 
+          word-wrap: break-word; 
+          white-space: normal; 
+          line-height: 1.5; 
+          text-align: left; 
+          min-width: 300px; 
+          max-width: 500px; 
+          overflow: auto;">
+          <strong>Emotion:</strong> Embarrassment<br>
+          <strong>Korean:</strong> 남들이 모두 울고 있을 때는 웃지 마세요.<br>
+          <strong>English translation:</strong> Don't laugh when everyone else is crying.
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/GT/OES_emb_000528.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/TSP-TTS/OES_emb_000528.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/TSP-TTS-upd/OES_emb_000528.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-ft/OES_emb_000528.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed/OES_emb_000528.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-egi/OES_emb_000528.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-clu/OES_emb_000528.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-upd/OES_emb_000528.wav" controls preload></audio>
+        </td>
+      </tr>
+    
+      <!-- Happy -->
+      <tr>
+        <td style="
+          border-top: 1px solid black; 
+          border-bottom: 1px solid black; 
+          padding: 10px; 
+          word-wrap: break-word; 
+          white-space: normal; 
+          line-height: 1.5; 
+          text-align: left; 
+          min-width: 300px; 
+          max-width: 500px; 
+          overflow: auto;">
+          <strong>Emotion:</strong> Happy<br>
+          <strong>Korean:</strong> 아버지도 좋아하실 겁니다.<br>
+          <strong>English translation:</strong> Our father will like it too.
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/GT/OES_hap_000441.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/TSP-TTS/OES_hap_000441.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/TSP-TTS-upd/OES_hap_000441.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-ft/OES_hap_000441.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed/OES_hap_000441.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-egi/OES_hap_000441.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-clu/OES_hap_000441.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-upd/OES_hap_000441.wav" controls preload></audio>
+        </td>
+      </tr>
+    
+      <!-- Hurt -->
+      <tr>
+        <td style="
+          border-top: 1px solid black; 
+          border-bottom: 1px solid black; 
+          padding: 10px; 
+          word-wrap: break-word; 
+          white-space: normal; 
+          line-height: 1.5; 
+          text-align: left; 
+          min-width: 300px; 
+          max-width: 500px; 
+          overflow: auto;">
+          <strong>Emotion:</strong> Hurt<br>
+          <strong>Korean:</strong> 아주 나쁜 꿈을 꿨어요.<br>
+          <strong>English translation:</strong> I had a very bad dream.
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/GT/OES_hur_000265.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/TSP-TTS/OES_hur_000265.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/TSP-TTS-upd/OES_hur_000265.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-ft/OES_hur_000265.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed/OES_hur_000265.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-egi/OES_hur_000265.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-clu/OES_hur_000265.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-upd/OES_hur_000265.wav" controls preload></audio>
+        </td>
+      </tr>
+    
+      <!-- Neutral -->
+      <tr>
+        <td style="
+          border-top: 1px solid black; 
+          border-bottom: 1px solid black; 
+          padding: 10px; 
+          word-wrap: break-word; 
+          white-space: normal; 
+          line-height: 1.5; 
+          text-align: left; 
+          min-width: 300px; 
+          max-width: 500px; 
+          overflow: auto;">
+          <strong>Emotion:</strong> Neutral<br>
+          <strong>Korean:</strong> 그는 용감히 바닷가로 뛰어간다. 이따금 뒤를 돌아보면서.<br>
+          <strong>English translation:</strong> He runs bravely toward the seaside, glancing back from time to time.
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/GT/OES_neu_001085.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/TSP-TTS/OES_neu_001085.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/TSP-TTS-upd/OES_neu_001085.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-ft/OES_neu_001085.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed/OES_neu_001085.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-egi/OES_neu_001085.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-clu/OES_neu_001085.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-upd/OES_neu_001085.wav" controls preload></audio>
+        </td>
+      </tr>
+    
+      <!-- Sad -->
+      <tr>
+        <td style="
+          border-top: 1px solid black; 
+          border-bottom: 1px solid black; 
+          padding: 10px; 
+          word-wrap: break-word; 
+          white-space: normal; 
+          line-height: 1.5; 
+          text-align: left; 
+          min-width: 300px; 
+          max-width: 500px; 
+          overflow: auto;">
+          <strong>Emotion:</strong> Sad<br>
+          <strong>Korean:</strong> 게다가 딱 당신 앞에서 그랬다니.<br>
+          <strong>English translation:</strong> To make matters worse, it happened right in front of you.
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/GT/OES_sad_000072.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/TSP-TTS/OES_sad_000072.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/TSP-TTS-upd/OES_sad_000072.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-ft/OES_sad_000072.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed/OES_sad_000072.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-egi/OES_sad_000072.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-clu/OES_sad_000072.wav" controls preload></audio>
+        </td>
+        <td style="border-top: 1px solid black; border-bottom: 1px solid black;">
+          <audio src="MySamples/testset_wavs/Proposed-abl-upd/OES_sad_000072.wav" controls preload></audio>
+        </td>
+      </tr>
+    </table>
+    
+	</div>
+
+	<br>
+  <br>
+  <br>
+  <br>
+
+  <h3>2. Synthesized with out-of-domain data — same sentence</h3>
+<div style="overflow-x: auto;">
+  <table class="demo-table">
+    <tr>
+      <th colspan="7" style="font-size: 20px; padding: 15px;">Synthesized with out-of-domain data — same sentence</th>
+    </tr>
+    <tr>
+      <td colspan="7" class="text-cell">
+        <strong>Korean:</strong> 이런 일이 있었다고 누가 말해줬는데 정말이니<br>
+        <strong>English translation:</strong> Someone told me that this happened—is it true?
+      </td>
+    </tr>
+    <tr>
+      <th>Emotion</th>
+      <th>TSP-TTS (female)</th>
+      <th>TSP-TTS (male)</th>
+      <th>Proposed (female)</th>
+      <th>Proposed (male)</th>
+      <th>Proposed (w/o fine-tuning) (female)</th>
+      <th>Proposed (w/o fine-tuning) (male)</th>
+    </tr>
+  
+    <!-- Angry -->
+    <tr>
+      <td class="emotion-cell">Angry</td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/TSP-TTS/OES_ang.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/TSP-TTS/CHY_ang.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed-ft/OES_ang.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed-ft/CHY_ang.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed/OES_ang.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed/CHY_ang.wav" controls preload></audio>
+      </td>
+    </tr>
+  
+    <!-- Anxiety -->
+    <tr>
+      <td class="emotion-cell">Anxiety</td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/TSP-TTS/OES_anx.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/TSP-TTS/CHY_anx.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed-ft/OES_anx.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed-ft/CHY_anx.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed/OES_anx.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed/CHY_anx.wav" controls preload></audio>
+      </td>
+    </tr>
+  
+    <!-- Embarrassment -->
+    <tr>
+      <td class="emotion-cell">Embarrassment</td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/TSP-TTS/OES_emb.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/TSP-TTS/CHY_emb.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed-ft/OES_emb.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed-ft/CHY_emb.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed/OES_emb.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed/CHY_emb.wav" controls preload></audio>
+      </td>
+    </tr>
+  
+    <!-- Happy -->
+    <tr>
+      <td class="emotion-cell">Happy</td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/TSP-TTS/OES_hap.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/TSP-TTS/CHY_hap.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed-ft/OES_hap.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed-ft/CHY_hap.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed/OES_hap.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed/CHY_hap.wav" controls preload></audio>
+      </td>
+    </tr>
+  
+    <!-- Hurt -->
+    <tr>
+      <td class="emotion-cell">Hurt</td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/TSP-TTS/OES_hur.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/TSP-TTS/CHY_hur.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed-ft/OES_hur.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed-ft/CHY_hur.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed/OES_hur.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed/CHY_hur.wav" controls preload></audio>
+      </td>
+    </tr>
+  
+    <!-- Neutral -->
+    <tr>
+      <td class="emotion-cell">Neutral</td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/TSP-TTS/OES_neu.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/TSP-TTS/CHY_neu.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed-ft/OES_neu.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed-ft/CHY_neu.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed/OES_neu.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed/CHY_neu.wav" controls preload></audio>
+      </td>
+    </tr>
+  
+    <!-- Sad -->
+    <tr>
+      <td class="emotion-cell">Sad</td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/TSP-TTS/OES_sad.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/TSP-TTS/CHY_sad.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed-ft/OES_sad.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed-ft/CHY_sad.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed/OES_sad.wav" controls preload></audio>
+      </td>
+      <td class="audio-cell">
+        <audio src="MySamples/single_wavs/Proposed/CHY_sad.wav" controls preload></audio>
+      </td>
+    </tr>
+  
+  </table>
+</div>
+	<br>
+  <br>
+  <br>
+  <br>
+  <h3>3. Synthesized Speech for Intensity Control</h3>
+  <div style="overflow-x: auto;">
+  <table class="demo-table">
+    <tr>
+      <th colspan="4" style="font-size: 20px; padding: 15px;">Synthesized Speech for Intensity Control</th>
+    </tr>
+    <tr>
+      <th>Emotion</th>
+      <th>TSP-TTS</th>
+      <th>Proposed</th>
+      <th>Proposed (w/o fine-tuning)</th>
+    </tr>
+
+    <!-- Angry -->
+    <tr>
+      <td class="emotion-label" rowspan="2">
+        Angry<br>
+        <div class="sentence">"니가 어떻게 그럴 수 있어"<br><em>How could you do that?</em></div>
+      </td>
+      <td><div class="intensity-label">Weak</div><audio src="MySamples/intensity_wavs/TSP-TTS/JCH_ang_1.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Weak</div><audio src="MySamples/intensity_wavs/Proposed-ft/JCH_ang_1.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Weak</div><audio src="MySamples/intensity_wavs/Proposed/JCH_ang_1.wav" controls preload></audio></td>
+    </tr>
+    <tr>
+      <td><div class="intensity-label">Strong</div><audio src="MySamples/intensity_wavs/TSP-TTS/JCH_ang_3.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Strong</div><audio src="MySamples/intensity_wavs/Proposed-ft/JCH_ang_3.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Strong</div><audio src="MySamples/intensity_wavs/Proposed/JCH_ang_3.wav" controls preload></audio></td>
+    </tr>
+
+    <!-- Anxiety -->
+    <tr>
+      <td class="emotion-label" rowspan="2">
+        Anxiety<br>
+        <div class="sentence">"불길한 예감이 들어"<br><em>I have a bad feeling about this.</em></div>
+      </td>
+      <td><div class="intensity-label">Weak</div><audio src="MySamples/intensity_wavs/TSP-TTS/JCH_anx_1.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Weak</div><audio src="MySamples/intensity_wavs/Proposed-ft/JCH_anx_1.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Weak</div><audio src="MySamples/intensity_wavs/Proposed/JCH_anx_1.wav" controls preload></audio></td>
+    </tr>
+    <tr>
+      <td><div class="intensity-label">Strong</div><audio src="MySamples/intensity_wavs/TSP-TTS/JCH_anx_3.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Strong</div><audio src="MySamples/intensity_wavs/Proposed-ft/JCH_anx_3.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Strong</div><audio src="MySamples/intensity_wavs/Proposed/JCH_anx_3.wav" controls preload></audio></td>
+    </tr>
+
+    <!-- Embarrassment -->
+    <tr>
+      <td class="emotion-label" rowspan="2">
+        Embarrassment<br>
+        <div class="sentence">"차마 못할 소리를 하고 그래"<br><em>You say things I can hardly bear to hear.</em></div>
+      </td>
+      <td><div class="intensity-label">Weak</div><audio src="MySamples/intensity_wavs/TSP-TTS/OES_emb_1.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Weak</div><audio src="MySamples/intensity_wavs/Proposed-ft/OES_emb_1.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Weak</div><audio src="MySamples/intensity_wavs/Proposed/OES_emb_1.wav" controls preload></audio></td>
+    </tr>
+    <tr>
+      <td><div class="intensity-label">Strong</div><audio src="MySamples/intensity_wavs/TSP-TTS/OES_emb_3.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Strong</div><audio src="MySamples/intensity_wavs/Proposed-ft/OES_emb_3.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Strong</div><audio src="MySamples/intensity_wavs/Proposed/OES_emb_3.wav" controls preload></audio></td>
+    </tr>
+
+    <!-- Happy -->
+    <tr>
+      <td class="emotion-label" rowspan="2">
+        Happy<br>
+        <div class="sentence">"아버지도 좋아하실 겁니다"<br><em>Father will like it too.</em></div>
+      </td>
+      <td><div class="intensity-label">Weak</div><audio src="MySamples/intensity_wavs/TSP-TTS/LSY_hap_1.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Weak</div><audio src="MySamples/intensity_wavs/Proposed-ft/LSY_hap_1.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Weak</div><audio src="MySamples/intensity_wavs/Proposed/LSY_hap_1.wav" controls preload></audio></td>
+    </tr>
+    <tr>
+      <td><div class="intensity-label">Strong</div><audio src="MySamples/intensity_wavs/TSP-TTS/LSY_hap_3.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Strong</div><audio src="MySamples/intensity_wavs/Proposed-ft/LSY_hap_3.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Strong</div><audio src="MySamples/intensity_wavs/Proposed/LSY_hap_3.wav" controls preload></audio></td>
+    </tr>
+
+    <!-- Hurt -->
+    <tr>
+      <td class="emotion-label" rowspan="2">
+        Hurt<br>
+        <div class="sentence">"어떻게 된 일이지?"<br><em>What happened?</em></div>
+      </td>
+      <td><div class="intensity-label">Weak</div><audio src="MySamples/intensity_wavs/TSP-TTS/JCH_hur_1.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Weak</div><audio src="MySamples/intensity_wavs/Proposed-ft/JCH_hur_1.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Weak</div><audio src="MySamples/intensity_wavs/Proposed/JCH_hur_1.wav" controls preload></audio></td>
+    </tr>
+    <tr>
+      <td><div class="intensity-label">Strong</div><audio src="MySamples/intensity_wavs/TSP-TTS/JCH_hur_3.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Strong</div><audio src="MySamples/intensity_wavs/Proposed-ft/JCH_hur_3.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Strong</div><audio src="MySamples/intensity_wavs/Proposed/JCH_hur_3.wav" controls preload></audio></td>
+    </tr>
+
+    <!-- Sad -->
+    <tr>
+      <td class="emotion-label" rowspan="2">
+        Sad<br>
+        <div class="sentence">"얼굴을 파묻고 소리 내 울고 싶었습니다"<br><em>I wanted to bury my face and cry out loud.</em></div>
+      </td>
+      <td><div class="intensity-label">Weak</div><audio src="MySamples/intensity_wavs/TSP-TTS/OES_sad_1.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Weak</div><audio src="MySamples/intensity_wavs/Proposed-ft/OES_sad_1.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Weak</div><audio src="MySamples/intensity_wavs/Proposed/OES_sad_1.wav" controls preload></audio></td>
+    </tr>
+    <tr>
+      <td><div class="intensity-label">Strong</div><audio src="MySamples/intensity_wavs/TSP-TTS/OES_sad_3.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Strong</div><audio src="MySamples/intensity_wavs/Proposed-ft/OES_sad_3.wav" controls preload></audio></td>
+      <td><div class="intensity-label">Strong</div><audio src="MySamples/intensity_wavs/Proposed/OES_sad_3.wav" controls preload></audio></td>
+    </tr>
+  </table>
+</div>
+
+  <br>
+  <br>
+  <br>
+  <br>
+  <h3>4. Synthesized Speech for Emotion Mixing</h3>
+  <div style="overflow-x: auto;">
+  <table class="demo-table">
+    <tr>
+      <th colspan="4" style="font-size: 20px; padding: 15px;">Synthesized Speech for Emotion Mixing</th>
+    </tr>
+    <tr>
+      <th>Emotion Mix</th>
+      <th>TSP-TTS</th>
+      <th>Proposed</th>
+      <th>Proposed (w/o fine-tuning)</th>
+    </tr>
+
+    <tr>
+      <td class="emotion-label">
+        Angry + Sad<br>
+        <div class="sentence">"왜 항상 내가 참아야 하는거야"<br>
+        <em>Why is it always me who has to endure?</em></div>
+      </td>
+      <td class="audio-cell"><audio src="MySamples/mix_wavs/TSP-TTS/JCH_ang_sad.wav" controls preload></audio></td>
+      <td class="audio-cell"><audio src="MySamples/mix_wavs/Proposed-ft/JCH_ang_sad.wav" controls preload></audio></td>
+      <td class="audio-cell"><audio src="MySamples/mix_wavs/Proposed/JCH_ang_sad.wav" controls preload></audio></td>
+    </tr>
+
+    <tr>
+      <td class="emotion-label">
+        Sad + Anxiety<br>
+        <div class="sentence">"혹시 내가 너무 이상하게 보였던 건 아닌지"<br>
+        <em>I wonder if I looked too strange.</em></div>
+      </td>
+      <td class="audio-cell"><audio src="MySamples/mix_wavs/TSP-TTS/JCH_sad_anx.wav" controls preload></audio></td>
+      <td class="audio-cell"><audio src="MySamples/mix_wavs/Proposed-ft/JCH_sad_anx.wav" controls preload></audio></td>
+      <td class="audio-cell"><audio src="MySamples/mix_wavs/Proposed/JCH_sad_anx.wav" controls preload></audio></td>
+    </tr>
+
+    <tr>
+      <td class="emotion-label">
+        Happy + Embarrassment<br>
+        <div class="sentence">"많이 떨렸는데 정말 다행이야"<br>
+        <em>I was really nervous, but I'm so relieved.</em></div>
+      </td>
+      <td class="audio-cell"><audio src="MySamples/mix_wavs/TSP-TTS/LSY_hap_emb.wav" controls preload></audio></td>
+      <td class="audio-cell"><audio src="MySamples/mix_wavs/Proposed-ft/LSY_hap_emb.wav" controls preload></audio></td>
+      <td class="audio-cell"><audio src="MySamples/mix_wavs/Proposed/LSY_hap_emb.wav" controls preload></audio></td>
+    </tr>
+
+    <tr>
+      <td class="emotion-label">
+        Angry + Hurt<br>
+        <div class="sentence">"넌 항상 그렇게 사람 마음 가지고 장난해"<br>
+        <em>You always play with people's hearts like that.</em></div>
+      </td>
+      <td class="audio-cell"><audio src="MySamples/mix_wavs/TSP-TTS/OES_ang_hur.wav" controls preload></audio></td>
+      <td class="audio-cell"><audio src="MySamples/mix_wavs/Proposed-ft/OES_ang_hur.wav" controls preload></audio></td>
+      <td class="audio-cell"><audio src="MySamples/mix_wavs/Proposed/OES_ang_hur.wav" controls preload></audio></td>
+    </tr>
+  </table>
+</div>
+<br>
+
+
+</section>
+
+<br>
+<br>
+<br>
+<br>
+<hr>
+<footer class="site-footer">
+</footer>
+</section>
+</body>
+<grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration>
+
+</html> 
